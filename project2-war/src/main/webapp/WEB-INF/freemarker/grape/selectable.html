@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='assets/plugins/selectable/css/fullcalendar.css' rel='stylesheet' />
+<link href='assets/plugins/selectable/css/tip-darkgray/tip-tip-darkgray.css' rel='stylesheet' />
+<link href='assets/plugins/selectable/css/fullcalendar.print.css' rel='stylesheet' media='print' />
+<link rel="stylesheet" href="assets/plugins/selectable/css/flick/jquery-ui-1.10.4.custom.css">
+
+<script src='assets/plugins/selectable/js/moment.min.js'></script>
+<script src='assets/plugins/selectable/js/jquery-1.8.0.min.js'></script>
+<script src="assets/plugins/selectable/js/YYFMap.js"></script>
+<script src="assets/plugins/selectable/js/jquery-ui-1.10.4.custom.js"></script>
+<script src='assets/plugins/selectable/js/jquery.poshytip.js'></script>
+<script src='assets/plugins/selectable/js/fullcalendar.js'></script>
+<script src='assets/plugins/selectable/js/jquery-ui-timepicker-addon.js'></script>
+ <script src="assets/plugins/selectable/js/main.time.js"></script>
+
+ <script src='assets/plugins/selectable/js/lang-all.js'></script>
+
+<style type="text/css">
+    html,body {
+        height:100%;
+        overflow:hidden;
+    }
+    body,div,ul,li {
+        margin:0;
+        padding:0;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+        font-size: 14px;
+        font:12px/1.5 \5fae\8f6f\96c5\9ed1;
+        overflow: scroll;
+    }
+    ul {
+        list-style-type:none;
+    }
+    #dialog{ display: none}
+    #calendar {
+        width: 900px;
+        margin: 40px auto;
+    }
+    #rightMenu {
+        position:absolute;
+        top:-9999px;
+        left:-9999px;
+        z-index: 9999;
+    }
+    #rightMenu ul {
+        float:left;
+        border:1px solid #979797;
+        background: #ffffff url(http://js.fgm.cc/learn/lesson6/img/line.png) 24px 0 repeat-y;
+        padding:2px;
+        box-shadow:2px 2px 2px rgba(0,0,0,.6);
+    }
+    #rightMenu ul li {
+        float:left;
+        clear:both;
+        height:24px;
+        cursor:pointer;
+        line-height:24px;
+        white-space:nowrap;
+        padding:0 30px;
+    }
+    #rightMenu ul li.sub {
+        background-repeat:no-repeat;
+        background-position:right 9px;
+        background-image:url(http://js.fgm.cc/learn/lesson6/img/arrow.png);
+    }
+    #rightMenu ul li.active {
+        background-color:#dcebf1;
+        border-radius:3px;
+        border:1px solid #aecff7;
+        height:22px;
+        line-height:22px;
+        background-position:right -8px;
+        padding:0 29px;
+    }
+    #rightMenu ul ul {
+        display:none;
+        position:absolute;
+    }
+    #rightMenu1 {
+        position:absolute;
+        top:-9999px;
+        left:-9999px;
+        z-index: 9998;
+    }
+    #rightMenu1 ul {
+        float:left;
+        border:1px solid #979797;
+        background: #ffffff url(http://js.fgm.cc/learn/lesson6/img/line.png) 24px 0 repeat-y;
+        padding:2px;
+        box-shadow:2px 2px 2px rgba(0,0,0,.6);
+    }
+    #rightMenu1 ul li {
+        float:left;
+        clear:both;
+        height:24px;
+        cursor:pointer;
+        line-height:24px;
+        white-space:nowrap;
+        padding:0 30px;
+    }
+    #rightMenu1 ul li.sub {
+        background-repeat:no-repeat;
+        background-position:right 9px;
+        background-image:url(http://js.fgm.cc/learn/lesson6/img/arrow.png);
+    }
+    #rightMenu1 ul li.active {
+        background-color:#dcebf1;
+        border-radius:3px;
+        border:1px solid #aecff7;
+        height:22px;
+        line-height:22px;
+        background-position:right -8px;
+        padding:0 29px;
+    }
+    #rightMenu1 ul ul {
+        display:none;
+        position:absolute;
+    }
+    .ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+    .ui-timepicker-div dl { text-align: left; }
+    .ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
+    .ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
+    .ui-timepicker-div td { font-size: 90%; }
+    .ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+</style>
+
+</head>
+
+<body oncontextmenu="return false">
+
+<div style="float: right">
+    <button  id="yyf" class="btn btn-primary">保存</button>
+    <button  id="pre" class="btn">上一周</button>
+    <button  id="next" class="btn btn-primary">下一周</button>  </div>
+
+<div id='calendar' style="font-family:'微软雅黑'"></div>
+<div id="rightMenu1">
+    <ul>
+        <li id="change"><strong>修改</strong></li>
+        <li id="del"><strong>删除</strong></li>
+        <li id="copy"><strong>复制</strong></li>
+        <li id="paste"><strong>粘贴</strong></li>
+    </ul>
+</div>
+    <div id="rightMenu">
+        <ul>
+            <li id="add"><strong>添加</strong></li>
+
+        </ul>
+    </div>
+
+
+<div id="dialog" title="添加事件">
+    <p>配件折扣<input id="price_p" />%</p>    <p>工时折扣<input id="price_g" />%</p>
+    <input id="startTime" type="text"  onchange="startTime_Change()" name="datetime" value="2014-06-06 10:00" />  到
+    <input id="endTime" type="text"  name="datetime" value="2014-06-06 10:00" />
+    <p>工位数量<input id="number_g" /></p>
+    <p><input id="copyNextWeek" type="checkbox" />同步到下周</p>
+
+
+
+
+</div>
+</body>
+</html>
+
+

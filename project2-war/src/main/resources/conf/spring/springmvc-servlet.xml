@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:p="http://cxf.apache.org/policy" xmlns:ss="http://www.springframework.org/schema/security"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+   	http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd 
+   	http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd 
+   	http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd
+   	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+   	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+   	http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd 
+   	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd 
+   	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+   	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+   	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- 也可以在web.xml文件中加载了，两种方式自己选择 -->
+	<import resource="classpath:conf/spring/spring-placeholder.xml" />
+	<import resource="classpath:conf/spring/spring-venus-server.xml" />
+	<!-- <import resource="classpath:conf/spring/spring-venus-client.xml" /> -->
+	<import resource="classpath:conf/spring/spring-dataSource.xml" />
+	<import resource="classpath:conf/spring/spring-mybatis.xml" />
+	<import resource="classpath:conf/spring/spring-tx.xml" />
+	
+	<!-- <import resource="classpath*:conf/spring/saic-mas-dal.xml" />
+	<import resource="classpath*:conf/spring/saic-mas-ds.xml" />
+	<import resource="classpath:redis/scl-redis-client.xml" /> -->
+
+	<!-- <mvc:annotation-driven />
+
+	<context:annotation-config />
+
+	<context:component-scan base-package="com.saic.*"/>
+	<context:component-scan base-package="com.saike.grape.*"/> -->
+
+
+	<!--===================== view resovler ===================== -->
+	<!-- 对模型视图名称的解析器配置1 -->
+	<bean id="viewResolver" abstract="true">
+		<!-- <property name="attributes">
+			<props>
+				<prop key="imgHost">${ebiz.csc.imgHost}</prop>
+				<prop key="envName">${ebiz.csc.envName}</prop>
+			</props>
+		</property> -->
+	</bean>
+	
+	<!-- 对模型视图名称的解析器配置2 -->
+	<bean id="jstlViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver" parent="viewResolver">
+		<property name="order" value="2" />
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="contentType" value="text/html;charset=UTF8" />
+	</bean>
+	
+	<!-- 对模型视图名称的解析器配置3 -->
+	<bean id="viewResolver1" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass">
+			<value>org.springframework.web.servlet.view.JstlView</value>
+		</property>
+		<property name="prefix" value="/WEB-INF/page/" />
+		<property name="suffix" value=".jsp" />
+		<property name="contentType" value="text/html;charset=UTF8" />
+	</bean>
+	
+	<!-- 对模型视图名称的解析器配置4 -->
+	<bean id="freemarkerResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver" parent="viewResolver">
+		<property name="cache" value="false" />
+		<property name="order" value="1" />
+		<property name="viewNames">
+			<array>
+				<value>*.ftl</value>
+				<value>*.html</value>
+			</array>
+		</property>
+		<property name="requestContextAttribute" value="request" />
+		<property name="exposeSpringMacroHelpers" value="true" />
+		<property name="exposeRequestAttributes" value="true" />
+		<property name="exposeSessionAttributes" value="true" />
+		<property name="allowSessionOverride" value="true" />
+		<property name="contentType" value="text/html;charset=utf-8" />
+		<property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView" />
+	</bean>
+
+	<!-- ===================== freemarker 相关配置 ====================== -->
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<description>Required for Freemarker to work in web tier</description>
+		<property name="configuration" ref="freemarkerConfiguration" />
+	</bean>
+
+	<bean id="freemarkerConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
+		<!-- 模板加载路径 -->
+		<property name="templateLoaderPaths">
+			<list>
+				<value>/WEB-INF/html/</value>
+				<value>/WEB-INF/freemarker/</value>
+				<value>classpath:/saic_macro/</value>
+				<value>classpath:/csc_common/</value>
+			</list>
+		</property>
+		<property name="configLocation">
+			<value>classpath:conf/freemarker.properties</value>
+		</property>
+		<!--全局变量部分 -->
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="xml_escape" value-ref="fmXmlEscape" />
+				<entry key="html_escape" value-ref="fmHtmlEscape" />
+			</map>
+		</property>
+		<property name="defaultEncoding" value="utf-8" />
+	</bean>
+
+	<bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape" />
+	<bean id="fmHtmlEscape" class="freemarker.template.utility.HtmlEscape" />
+
+	<!-- ====================== i18n国际化配置 =============================== -->
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:i18n/messages" />
+	</bean>
+
+	<!-- ====================== spring的validator校验器配置 =============================== -->
+	<!-- <bean name="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource">
+			<ref bean="messageSource" />
+		</property>
+	</bean> -->
+
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
+		<property name="defaultLocale" value="zh_CN" />
+	</bean>
+	
+	<!-- spring自带的Properties文件解析器 -->
+	<bean id="springResourceProperties" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>conf/csc_conf.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- spring自带的扫描注解配置的url路径请求解析器 -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="cacheSeconds" value="0" />
+		<property name="messageConverters">
+			<list>
+				<bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- spring自带的扫描默认的url路径请求 解析器-->
+	<!-- <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref bean="readPropertiesHandlerInterceptor" />
+			</list>
+		</property>
+	</bean> -->
+
+	<!-- 添加不停机发包设置 -->
+	<!-- <bean name="/background-healthcheck"
+		class="org.springframework.web.servlet.mvc.ServletForwardingController">
+		<property name="servletName" value="healthcheck" />
+	</bean> -->
+	
+	<!-- 自己配置的bean -->
+	<!-- <bean id="propertiesUtil" class="com.saike.grape.csc.util.PropertiesUtilImpl">
+		<property name="resources">
+			<ref bean="springResourceProperties" />
+		</property>
+	</bean> -->
+	
+	<!-- 
+	<bean name="readPropertiesHandlerInterceptor" class="com.saic.grape.csc.util.ReadPropertiesHandlerInterceptor"></bean>
+	-->
+	
+	<!-- 拦截器配置 -->
+	<!-- <mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**/*.htm" />
+			<mvc:mapping path="/**/*.json" />
+			<mvc:mapping path="/**/*.do" />
+			<ref bean="readPropertiesHandlerInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors> -->
+
+</beans>

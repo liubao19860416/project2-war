@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="CSC" version="2.5">
+  <display-name>CSC Web Application</display-name>
+  
+  <!-- 监听器，加载spring的配置文件 -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
+	   <!--  classpath:conf/spring/spring-placeholder.xml,
+		classpath:conf/spring/spring-venus-server.xml, -->
+		<!-- classpath:conf/spring/spring-venus-client.xml, -->
+		<!-- classpath:conf/spring/spring-dataSource.xml,
+		classpath:conf/spring/spring-mybatis.xml,
+		classpath:conf/spring/spring-tx.xml, -->
+		
+		<!-- 因为该文件不在默认的目录下，所以这样放置的话，只能使用下面的指定位置的加载方式 -->
+		<!-- classpath:conf/spring/springmvc-servlet.xml, -->
+		
+		<!-- classpath:applicationContext-sso.xml,
+		classpath:dds-session.xml, -->
+	</param-value>
+  </context-param>
+  
+  <!-- 字符编码过滤器 -->
+  <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>utf-8</param-value>
+    </init-param>
+    <init-param>
+      <param-name>forceEncoding</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <!-- 两者选其一即可，映射的servlet的name -->
+    <!-- <url-pattern>/*</url-pattern> -->
+    <servlet-name>springmvc</servlet-name>
+  </filter-mapping>
+  
+  <!-- springmvc请求转发的转发器（servlet） -->
+  <servlet>
+    <servlet-name>springmvc</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!--  加载springmvc的转发配置文件，也可以在下面那里进行加载，不在这里指定的话，默认加载的名称必须为"该servlet的名称-servlet.xml"名称，且默认放在/WEB-INF/目录下 -->
+   <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:conf/spring/springmvc-servlet.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>springmvc</servlet-name>
+    <url-pattern>*.htm</url-pattern>
+    <url-pattern>*.json</url-pattern>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- 默认登录页面 -->
+  <welcome-file-list>
+    <welcome-file>/index.htm</welcome-file>
+  </welcome-file-list>
+  
+  <!-- 添加不停机发包设置 -->
+  <!-- <servlet>
+	<servlet-name>healthcheck</servlet-name>
+	<servlet-class>com.saic.healthcheck.web.servlet.HealthCheckServlet.HealthCheckServlet</servlet-class>
+  </servlet> -->
+  
+  
+ <!-- <filter>
+    <filter-name>sessionFilter</filter-name>
+    <filter-class>com.saic.framework.session.filter.DdsSessionCooikeFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>sessionFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>CAS Single Sign Out Filter</filter-name>
+    <filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CAS Single Sign Out Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <listener>
+    <listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>
+  </listener>
+  <filter>
+    <filter-name>springSecurityFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    <init-param>
+      <param-name>targetBeanName</param-name>
+      <param-value>springSecurityFilterChain</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>springSecurityFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>casprincipalFilter</filter-name>
+    <filter-class>com.saic.sso.filter.PrincipalFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>casprincipalFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping> -->
+  
+  
+ <!--  <filter>
+    <filter-name>sitemesh</filter-name>
+    <filter-class>com.opensymphony.module.sitemesh.filter.PageFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>sitemesh</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <servlet>
+    <servlet-name>sitemesh-freemarker</servlet-name>
+    <servlet-class>com.ibm.framework.web.sitemesh.SitemeshFreemarkerDecoratorServlet</servlet-class>
+    <init-param>
+      <param-name>TemplatePath</param-name>
+      <param-value>/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>NoCache</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>default_encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>sitemesh-freemarker</servlet-name>
+    <url-pattern>*.ftl</url-pattern>
+    <url-pattern>*.html</url-pattern>
+  </servlet-mapping> -->
+  
+  
+</web-app>

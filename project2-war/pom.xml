@@ -1,0 +1,296 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.saike.project</groupId>
+	<artifactId>project2-war</artifactId>
+	<version>1.1.0-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name>project2-war</name>
+ 	<url>http://maven.apache.org</url>
+ 	<description>实现的基本springmvc功能的war工程2</description>
+ 	<!-- 描述信息：用来做基础的venus调用服务的，可以为外部提供服务或者从外部获取服务，这是原来的csc工程 -->
+
+	<!-- 需要排除掉依赖的一个venus-backend包 -->
+	<!-- <parent>
+		<groupId>com.saic.framework</groupId>
+		<artifactId>saic-parent</artifactId>
+		<version>1.1.2</version>
+	</parent> -->
+ 	
+	<properties>
+		<java-version>1.7</java-version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<jdkLevel>1.7</jdkLevel>
+		<jvmargs>-XX:MaxPermSize=384m -Xms512m -Xmx1024m</jvmargs>
+		<spring.version>3.2.3.RELEASE</spring.version>
+		<servlet.version>2.5</servlet.version>
+		<junit.version>4.11</junit.version>
+		<logback.version>1.1.2</logback.version>
+	</properties>
+
+
+	<dependencies>
+		<!-- 添加base依赖jar包 -->
+		<dependency>
+			<groupId>com.saike.project</groupId>
+			<artifactId>project-base</artifactId>
+			<version>1.1.0-SNAPSHOT</version>
+		</dependency>
+		<!-- 依赖的project-dao（+service）工程的jar包-->
+		<dependency>
+			<groupId>com.saike.project</groupId>
+			<artifactId>project-dao</artifactId>
+			<version>1.1.0-SNAPSHOT</version>
+			<!-- 它没有依赖了公司的base工程jar包 -->
+			<!-- <exclusions>
+				<exclusion>
+					<groupId>com.saike.grape</groupId>
+					<artifactId>grape-base</artifactId>
+					<version>1.1.0-SNAPSHOT</version>
+				</exclusion>
+			</exclusions> -->
+		</dependency>
+		
+		<!-- 解析venus.xml配置文件的时候使用了 -->
+		<dependency>
+			<artifactId>venus-backend</artifactId>
+			<groupId>com.meidusa.venus</groupId>
+			<version>3.2.12</version>
+		</dependency>
+		
+		<!-- 依赖公司工程的jar包 -->
+		<dependency>
+			<groupId>com.saike.grape</groupId>
+			<artifactId>grape-service-api</artifactId>
+			<version>1.1.0-SNAPSHOT</version>
+			<!-- 它依赖了公司的base工程jar包 -->
+			<exclusions>
+				<exclusion>
+					<groupId>com.saike.grape</groupId>
+					<artifactId>grape-base</artifactId>
+					<version>1.1.0-SNAPSHOT</version>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.saike.venus.mugo.service.api</groupId>
+			<artifactId>venus-rigida-open-api</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+		<!-- 消息推送 -->
+		<dependency>
+			<groupId>com.saike.venus.mugo.service.api</groupId>
+			<artifactId>venus-mugo-service-api</artifactId>
+			<version>1.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.saic.framework</groupId>
+			<artifactId>saic-common-web</artifactId>
+			<version>1.0.2</version>
+			<!-- 排除依赖 -->
+			<exclusions>
+				<exclusion>
+					<artifactId>venus-backend</artifactId>
+					<groupId>com.meidusa.venus</groupId>
+					<version>3.2.12</version>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.saic.ebiz</groupId>
+			<artifactId>saic-constant-code</artifactId>
+			<version>1.0.3</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>venus-backend</artifactId>
+					<groupId>com.meidusa.venus</groupId>
+					<version>3.2.12</version>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.saic.ebiz</groupId>
+			<artifactId>ebiz-promotion-api</artifactId>
+			<version>2.2.12</version>
+		</dependency>
+
+		<!-- 未知jar包 -->
+		<!-- <dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>sitemesh</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.saic.sso</groupId>
+			<artifactId>saic-sso-client</artifactId>
+			<version>1.0.1</version>
+		</dependency> -->
+
+		<!-- 添加不停机发包设置 -->
+		<!-- <dependency>
+			<groupId>com.saic.healthcheck</groupId>
+			<artifactId>saic-healthcheck-web</artifactId>
+			<version>0.0.2</version>
+		</dependency> -->
+		
+		<!-- bean校验器validator相关jar包 -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>4.2.0.Final</version>
+		</dependency>
+		
+		<!-- freemarker -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.19</version>
+		</dependency>
+
+		<!-- SpringMVC -->
+		<!-- <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency> -->
+		
+		<!-- poi依赖的jar包 -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+		
+		<!-- spring test的Controller层测试相关 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.8.8</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- junit 测试，test中使用到了 -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- servlet-api 及jstl相关的jar包，解析jsp文件必须的 -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>${servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- 
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		-->
+
+		<!-- <dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.1</version>
+		</dependency> -->
+
+		<!-- <dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.meidusa.toolkit</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.3.17</version>
+		</dependency>
+		<dependency>
+			<groupId>com.meidusa.toolkit.commons</groupId>
+			<artifactId>toolkit-common-bean</artifactId>
+			<version>1.3.6</version>
+		</dependency> -->
+		
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+					<warName>${project.artifactId}-${project.version}-release-${timestamp}</warName>
+					<!-- <warName>ROOT</warName> -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- install 跳过test测试 -->
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			
+			<!-- 压缩zip包使用 -->
+			<!-- <plugin> <artifactId>maven-assembly-plugin</artifactId> <version>2.2.1</version> 
+				<configuration> <descriptors> <descriptor>src/assembly/web-resources-distribution.xml</descriptor> 
+				</descriptors> </configuration> </plugin> YUI Compressor Maven压缩插件, mvn yuicompressor:compress 
+				<plugin> <groupId>net.alchim31.maven</groupId> <artifactId>yuicompressor-maven-plugin</artifactId> 
+				<executions> <execution> <goals> <goal>compress</goal> </goals> </execution> 
+				</executions> <configuration> 读取js,css文件采用UTF-8编码 <encoding>UTF-8</encoding> 
+				不显示js可能的错误 <jswarn>false</jswarn> 若存在已压缩的文件，会先对比源文件是否有改动 有改动便压缩，无改动就不压缩 <force>false</force> 
+				在指定的列号后插入新行 <linebreakpos>-1</linebreakpos> 压缩之前先执行聚合文件操作 <preProcessAggregates>true</preProcessAggregates> 
+				压缩后保存文件后缀 <suffix>.min</suffix> 源目录，即需压缩的根目录 <sourceDirectory>${basedir}/src/main/webapp/assets</sourceDirectory> 
+				压缩js和css文件 <includes> <include>**/css/**/*.css</include> <include>**/fonts/**/*.css</include> 
+				<include>**/img/**/*.jpg</include> <include>**/img/**/*.png</include> <include>**/plugins/**/*.css</include> 
+				<include>**/scripts/**/*.css</include> </includes> 以下目录和文件不会被压缩 <excludes> 
+				<exclude>*.jsp</exclude> <exclude>*.ftl</exclude> </excludes> 压缩后输出文件目录 <outputDirectory>${basedir}/src/main/webapp/assets</outputDirectory> 
+				</configuration> </plugin> -->
+		</plugins>
+	</build>
+	
+</project>
